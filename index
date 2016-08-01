@@ -1,0 +1,34 @@
+#!/usr/bin/env node
+
+var path = require('path');
+var programm = require('commander');
+var app = require('./src/app.js');
+var log = require('./src/utils.js');
+
+programm
+	.version('0.0.1')
+	.option('-f, --force', '使用该参数时请注意，会覆盖输出目录，原文件无法找回.')
+	.option('-v, --vue', 'create vue components.')
+	.option('-d, --dist', 'set dist path.')
+	.parse(process.argv);
+
+log.info('build you own web components:')
+
+//默认产出路径
+var defaultPath = path.join(__dirname, '../dist')
+var options = {
+
+}
+if(programm.dist){
+	defaultPath = programm.args[0]
+	log.info(' -- output files in ' + path.resolve(defaultPath))
+}
+
+if(programm.force){
+	options.force = true
+}
+
+if(programm.vue){
+	var type = 'vue'
+	app.createApp(type, defaultPath, options)	
+}

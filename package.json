@@ -1,0 +1,24 @@
+{
+  "name": "iat",
+  "version": "0.0.1",
+  "description": "a simple component command line app.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "iat": "index"
+  },
+  "keywords": [
+    "vue",
+    "component"
+  ],
+  "author": "yangshengfu_iwm",
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "commander": "^2.9.0",
+    "fs-extra": "^0.30.0",
+    "vue-component-skeleton": "0.0.1"
+  }
+}
