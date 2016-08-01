@@ -10,11 +10,14 @@ npm install iat -g
 
 * -v/--vue
 
+```js
+iat -v -d ./dist
+
 生成vue组件框架
 
 * -d/--dist
 
-指定生成目录,默认目录为当前目录的上一级
+指定生成目录
 
 * -f/--force
 
