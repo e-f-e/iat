@@ -12,6 +12,7 @@ npm install iat -g
 
 ```js
 iat -v -d ./dist
+```
 
 生成vue组件框架
 
