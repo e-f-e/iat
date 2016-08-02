@@ -11,14 +11,19 @@ npm install iat -g
 * -v/--vue
 
 ```js
-iat -v -d ./dist
+iat -v appName
 ```
+上述命令会创建一个vue组件基本框架，appName如未指定，则默认为vue-component-skeleton
 
 生成vue组件框架
 
 * -d/--dist
 
-指定生成目录
+```js
+iat -v appName -d ./dist
+```
+
+指定生成目录，默认为当前路径
 
 * -f/--force
 

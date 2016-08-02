@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var path = require('path');
+var repl = require('repl');
 var programm = require('commander');
 var app = require('./src/app.js');
 var log = require('./src/utils.js');
@@ -15,7 +16,8 @@ programm
 log.info('build you own web components:')
 
 //默认产出路径
-var defaultPath = path.join(__dirname, '../dist')
+var defaultPath = path.join(process.cwd(), './dist')
+var defaultAppName = ''
 var options = {
 
 }
@@ -23,7 +25,7 @@ if(programm.dist){
 	defaultPath = programm.args[0]
 	log.info(' -- output files in ' + path.resolve(defaultPath))
 }else{
-	log.error(' -- output directory is neccesary.')	
+	//log.error(' -- output directory is neccesary.')	
 }
 
 if(programm.force){
@@ -32,5 +34,9 @@ if(programm.force){
 
 if(programm.vue){
 	var type = 'vue'
+	defaultAppName = 'vue-component-skeleton'
+	options.name = defaultAppName
+
+	//package 文件定制
 	app.createApp(type, defaultPath, options)	
 }
