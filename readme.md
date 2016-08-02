@@ -13,7 +13,7 @@ npm install iat -g
 ```js
 iat -v appName
 ```
-上述命令会创建一个vue组件基本框架，appName如未指定，则默认为vue-component-skeleton
+上述命令会创建一个vue组件基本框架
 
 生成vue组件框架
 

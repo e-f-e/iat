@@ -11,7 +11,7 @@ module.exports = {
 
         //检查output目录是否已存在，防止覆盖
         if(!options.force){
-            fs.exists(dest, function (exists) {
+            fs.exists(destPath, function (exists) {
                 if(exists){
                     log.warning(' -- ' + '目录' + destPath + '已存在，请先删除或使用 --force 强制覆盖.')
                 }else{
@@ -24,8 +24,13 @@ module.exports = {
         function copy(){
             fs.copy(srcPath, destPath, function (err) {
               if (err) return console.error(err)
-            customPackageJson(destPath, options)
-              log.success(' -- ' + type + " component skeleton generate at " + destPath)
+                customPackageJson(destPath, options)
+
+                if(options.name){
+                    //生成目录重命名
+                    fs.renameSync(destPath, path.join(path.dirname(destPath), options.name))
+                }
+                log.success(' -- ' + type + " component skeleton generate at " + path.resolve(destPath))
             });
         }
     }

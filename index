@@ -12,17 +12,16 @@ programm
 	.option('-v, --vue', 'create vue components.')
 	.option('-d, --dist', 'set dist path.')
 	.parse(process.argv);
-
 log.info('build you own web components:')
 
 //默认产出路径
-var defaultPath = path.join(process.cwd(), './dist')
+var defaultPath = path.join(process.cwd())
 var defaultAppName = ''
 var options = {
 
 }
 if(programm.dist){
-	defaultPath = programm.args[0]
+	defaultPath = programm.args[1]
 	log.info(' -- output files in ' + path.resolve(defaultPath))
 }else{
 	//log.error(' -- output directory is neccesary.')	
@@ -34,7 +33,7 @@ if(programm.force){
 
 if(programm.vue){
 	var type = 'vue'
-	defaultAppName = 'vue-component-skeleton'
+	defaultAppName = programm.args[0] || 'vue-component-skeleton'
 	options.name = defaultAppName
 
 	//package 文件定制
