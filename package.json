@@ -1,6 +1,6 @@
 {
   "name": "iat",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "description": "a simple component command line app.",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,6 @@
     "colors": "^1.1.2",
     "commander": "^2.9.0",
     "fs-extra": "^0.30.0",
-    "vue-component-skeleton": "0.0.1"
+    "vue-component-skeleton": "latest"
   }
 }

@@ -63,4 +63,11 @@ function customPackageJson(_path, option){
 
     outputPackage = JSON.stringify(outputPackage, null, 2)
     fs.writeFileSync(packageJsonPath, outputPackage)
+
+    //.gitignore
+    var gitignorePath = path.join(_path, '.gitignore')
+    var gitignoreStr = 'node_modules/'
+    fs.ensureFile(gitignorePath, function (err) {
+            fs.writeFileSync(gitignorePath, gitignoreStr)
+    })
 }
