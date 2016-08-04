@@ -12,7 +12,6 @@ programm
 	.option('-v, --vue', 'create vue components.')
 	.option('-d, --dist', 'set dist path.')
 	.parse(process.argv);
-log.info('build you own web components:')
 
 //默认产出路径
 var defaultPath = path.join(process.cwd())
@@ -22,7 +21,6 @@ var options = {
 }
 if(programm.dist){
 	defaultPath = programm.args[1]
-	log.info(' -- output files in ' + path.resolve(defaultPath))
 }else{
 	//log.error(' -- output directory is neccesary.')	
 }

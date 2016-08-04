@@ -18,7 +18,11 @@
   "dependencies": {
     "colors": "^1.1.2",
     "commander": "^2.9.0",
+    "download-git-repo": "^0.1.2",
     "fs-extra": "^0.30.0",
+    "inquirer": "^1.1.2",
+    "ora": "^0.3.0",
+    "request": "^2.74.0",
     "vue-component-skeleton": "latest"
   }
 }

@@ -1,48 +1,62 @@
 var fs = require('fs-extra');
 var path = require('path');
 var log = require('./utils.js');
+var exists = require('fs').existsSync
+var inquirer = require('inquirer')
+var request = require('request')
+var download = require('download-git-repo')
+var ora = require('ora')
 
 var destPath = ''
 var skeletonModuleName = ''
 module.exports = {
     createApp: function(type, dest, options){
-        var srcPath = mkSrc(type)
+        mkTemplate(type, options)
         destPath = path.join(dest, options.name)
 
         //检查output目录是否已存在，防止覆盖
         if(!options.force){
             fs.exists(destPath, function (exists) {
                 if(exists){
-                    log.warning(' -- ' + '目录' + destPath + '已存在，请先删除或使用 --force 强制覆盖.')
+                    inquirer.prompt([{
+                        type: 'confirm',
+                        message: '目录' + destPath + '已存在. 是否继续?(原目录会被覆盖)',
+                        name: 'ok'
+                      }]).then(function (answers) {
+                        if (answers.ok) {
+                          run()
+                        }
+                      })
+                    //log.warning(' -- ' + '目录' + destPath + '已存在，请先删除或使用 --force 强制覆盖.')
                 }else{
-                    copy()
+                    run()
                 }
             });
         }else{
-            copy()
+            run()
         }
-        function copy(){
-            fs.copy(srcPath, destPath, function (err) {
-              if (err) return console.error(err)
-                customPackageJson(destPath, options)
+        function run(){
+            checkDistBranch(skeletonModuleName, downloadAndGenerate, destPath, options)
+            // fs.copy(srcPath, destPath, function (err) {
+            //   if (err) return console.error(err)
+            //     customPackageJson(destPath, options)
 
-                if(options.name){
-                    //生成目录重命名
-                    fs.renameSync(destPath, path.join(path.dirname(destPath), options.name))
-                }
-                log.success(' -- ' + type + " component skeleton generate at " + path.resolve(destPath))
-            });
+            //     if(options.name){
+            //         //生成目录重命名
+            //         fs.renameSync(destPath, path.join(path.dirname(destPath), options.name))
+            //     }
+            //     log.success(' -- ' + type + " component skeleton generate at " + path.resolve(destPath))
+            // });
         }
     }
 }
 
-function mkSrc(type, options){
+function mkTemplate(type, options){
     options = options || {}
     var version = options.version || '1'
 
     if(version == 1){
         skeletonModuleName = 'vue-component-skeleton'
-        return path.join(__dirname, '../node_modules', skeletonModuleName)
     }else{
         log.error('wrong params!')
     }
@@ -58,7 +72,10 @@ function customPackageJson(_path, option){
         description: packageJson.description,
         dependencies: packageJson.dependencies,
         devDependencies: packageJson.devDependencies,
-        scripts: packageJson.scripts
+        scripts: packageJson.scripts,
+        main: packageJson.main,
+        keywords: packageJson.keywords,
+        license: packageJson.license
     }
 
     outputPackage = JSON.stringify(outputPackage, null, 2)
@@ -70,4 +87,63 @@ function customPackageJson(_path, option){
     fs.ensureFile(gitignorePath, function (err) {
             fs.writeFileSync(gitignorePath, gitignoreStr)
     })
+}
+
+
+/**
+ * Check if the template has a dist branch, if yes, use that.
+ *
+ * @param {String} template
+ * @param {Function} cb
+ */
+
+function checkDistBranch (template, cb, destPath, options) {
+    template = 'iwaimai-bi-fe/' + template
+  request({
+    url: 'https://api.github.com/repos/' + template + '/branches',
+    headers: {
+      'User-Agent': 'iwaimai'
+    }
+  }, function (err, res, body) {
+    if (err) log.error(err)
+    if (res.statusCode !== 200) {
+      log.error('Template does not exist: ' + template)
+    } else {
+      var hasDist = JSON.parse(body).some(function (branch) {
+        return branch.name === 'dist'
+      })
+      return cb(hasDist ? template + '#dist' : template, destPath, options)
+    }
+  })
+}
+
+/**
+ * Download a generate from a template repo.
+ *
+ * @param {String} template
+ */
+
+function downloadAndGenerate (template, destPath, options) {
+  var spinner = ora('downloading template')
+  spinner.start()
+  download(template, destPath, { clone: true }, function (err) {
+    
+    if (err) {
+        log.error('Failed to download repo ' + template + ': ' + err.message.trim())
+        spinner.fail()
+        return ;
+    }
+    spinner.succeed()
+    spinner.stop()
+    customPackageJson(destPath, options)
+
+    if(options.name){
+        //生成目录重命名
+        fs.renameSync(destPath, path.join(path.dirname(destPath), options.name))
+    }
+      log.success('Generated success at ' + destPath + '.')
+    // generate(name, tmp, to, function (err) {
+    //   if (err) log.error(err)
+    // })
+  })
 }
