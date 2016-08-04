@@ -1,6 +1,6 @@
 {
   "name": "iat",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "description": "a simple component command line app.",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,5 @@
     "inquirer": "^1.1.2",
     "ora": "^0.3.0",
     "request": "^2.74.0",
-    "vue-component-skeleton": "latest"
   }
 }
