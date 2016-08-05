@@ -1,6 +1,6 @@
 {
   "name": "iat",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "a simple component command line app.",
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,9 @@
     "vue",
     "component"
   ],
+  "engines": {
+    "node": ">=4.0.0"
+    },
   "author": "yangshengfu_iwm",
   "license": "ISC",
   "dependencies": {
@@ -23,5 +26,6 @@
     "inquirer": "^1.1.2",
     "ora": "^0.3.0",
     "request": "^2.74.0",
+    "semver": "^5.3.0"
   }
 }

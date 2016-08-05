@@ -1,6 +1,6 @@
 var fs = require('fs-extra');
 var path = require('path');
-var log = require('./utils.js');
+var log = require('./log.js');
 var exists = require('fs').existsSync
 var inquirer = require('inquirer')
 var request = require('request')
@@ -24,7 +24,8 @@ module.exports = {
                         name: 'ok'
                       }]).then(function (answers) {
                         if (answers.ok) {
-                          run()
+                            fs.emptydirSync(destPath)
+                            run()
                         }
                       })
                     //log.warning(' -- ' + '目录' + destPath + '已存在，请先删除或使用 --force 强制覆盖.')

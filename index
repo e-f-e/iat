@@ -4,7 +4,8 @@ var path = require('path');
 var repl = require('repl');
 var programm = require('commander');
 var app = require('./src/app.js');
-var log = require('./src/utils.js');
+var log = require('./src/log.js');
+var checkVersion = require('./src/check-version.js');
 
 programm
 	.version('0.0.2')
@@ -13,6 +14,7 @@ programm
 	.option('-d, --dist', 'set dist path.')
 	.parse(process.argv);
 
+checkVersion()
 //默认产出路径
 var defaultPath = path.join(process.cwd())
 var defaultAppName = ''
