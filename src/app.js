@@ -62,6 +62,7 @@ function customPackageJson(_path, name){
 function checkDistBranch (name, type, cb, destPath) {
     var template = config.appListInfo[type].repository,
         url = 'https://api.github.com/repos/' + template + '/branches';
+        console.log('url: ', url);
     request({
         url: url,
         headers: {

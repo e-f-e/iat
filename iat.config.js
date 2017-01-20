@@ -1,6 +1,6 @@
 module.exports = {
 	scaffolds: [
-		'vue1.x', 
+		'vue', 
 		'react', 
 		{
 			name: 'webpack1.x',
