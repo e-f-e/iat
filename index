@@ -6,36 +6,28 @@ var programm = require('commander');
 var app = require('./src/app.js');
 var log = require('./src/log.js');
 var checkVersion = require('./src/check-version.js');
+var packageInfo = require('./package.json');
+var config = require('./src/configProcess.js');
+var inquirer = require('inquirer');
 
 programm
-	.version('0.0.2')
-	.option('-f, --force', '使用该参数时请注意，会覆盖输出目录，原文件无法找回.')
-	.option('-v, --vue', 'create vue components.')
-	.option('-d, --dist', 'set dist path.')
+	.version(packageInfo.version)
 	.parse(process.argv);
 
 checkVersion()
-//默认产出路径
-var defaultPath = path.join(process.cwd())
-var defaultAppName = ''
-var options = {
 
-}
-if(programm.dist){
-	defaultPath = programm.args[1]
-}else{
-	//log.error(' -- output directory is neccesary.')	
-}
+var appName = programm.args[0],
+	output = path.join(__dirname);
 
-if(programm.force){
-	options.force = true
-}
-
-if(programm.vue){
-	var type = 'vue'
-	defaultAppName = programm.args[0] || 'vue-component-skeleton'
-	options.name = defaultAppName
-
-	//package 文件定制
-	app.createApp(type, defaultPath, options)	
+if (appName) {
+	inquirer.prompt([{
+		type: 'list',
+		name: 'appType',
+		message: 'choose one of the apps!',
+		choices: config.appList || []
+	}]).then(function (ansers) {
+		app.createApp(appName, ansers.appType, output);
+	});
+} else {
+	log.error('appName is must!');
 }

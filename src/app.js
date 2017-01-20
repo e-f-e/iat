@@ -1,82 +1,50 @@
 var fs = require('fs-extra');
 var path = require('path');
 var log = require('./log.js');
-var exists = require('fs').existsSync
-var inquirer = require('inquirer')
-var request = require('request')
-var download = require('download-git-repo')
-var ora = require('ora')
+var exists = require('fs').existsSync;
+var inquirer = require('inquirer');
+var request = require('request');
+var download = require('download-git-repo');
+var ora = require('ora');
+var config = require('./configProcess.js');
 
 var destPath = ''
 var skeletonModuleName = ''
 module.exports = {
-    createApp: function(type, dest, options){
-        mkTemplate(type, options)
-        destPath = path.join(dest, options.name)
+    createApp: function(name, type, dest){
+        destPath = path.join(dest, name);
+        skeletonModuleName = name;
 
-        //检查output目录是否已存在，防止覆盖
-        if(!options.force){
-            fs.exists(destPath, function (exists) {
-                if(exists){
-                    inquirer.prompt([{
-                        type: 'confirm',
-                        message: '目录' + destPath + '已存在. 是否继续?(原目录会被覆盖)',
-                        name: 'ok'
-                      }]).then(function (answers) {
-                        if (answers.ok) {
-                            fs.emptydirSync(destPath)
-                            run()
-                        }
-                      })
-                    //log.warning(' -- ' + '目录' + destPath + '已存在，请先删除或使用 --force 强制覆盖.')
-                }else{
-                    run()
-                }
-            });
-        }else{
-            run()
-        }
+        fs.exists(destPath, function (exists) {
+            if(exists){
+                inquirer.prompt([{
+                    type: 'confirm',
+                    message: 'directory ' + destPath + ' existed, do you want to rewrite it.',
+                    name: 'ok'
+                  }]).then(function (answers) {
+                    if (answers.ok) {
+                        fs.emptydirSync(destPath)
+                        run()
+                    }
+                  })
+            }else{
+                run()
+            }
+        });
+    
         function run(){
-            checkDistBranch(skeletonModuleName, downloadAndGenerate, destPath, options)
-            // fs.copy(srcPath, destPath, function (err) {
-            //   if (err) return console.error(err)
-            //     customPackageJson(destPath, options)
-
-            //     if(options.name){
-            //         //生成目录重命名
-            //         fs.renameSync(destPath, path.join(path.dirname(destPath), options.name))
-            //     }
-            //     log.success(' -- ' + type + " component skeleton generate at " + path.resolve(destPath))
-            // });
+            checkDistBranch(skeletonModuleName, type, downloadAndGenerate, destPath)
         }
     }
 }
 
-function mkTemplate(type, options){
-    options = options || {}
-    var version = options.version || '1'
 
-    if(version == 1){
-        skeletonModuleName = 'vue-component-skeleton'
-    }else{
-        log.error('wrong params!')
-    }
-}
-
-function customPackageJson(_path, option){
+function customPackageJson(_path, name){
     var packageJsonPath = path.join(_path, 'package.json')
     var packageJson = fs.readFileSync(packageJsonPath,'utf-8');
     packageJson = JSON.parse(packageJson)
     var outputPackage = {
-        name: option.name || packageJson.name,
-        version: '0.0.1',
-        description: packageJson.description,
-        dependencies: packageJson.dependencies,
-        devDependencies: packageJson.devDependencies,
-        scripts: packageJson.scripts,
-        main: packageJson.main,
-        keywords: packageJson.keywords,
-        license: packageJson.license
+        name: name || packageJson.name
     }
 
     outputPackage = JSON.stringify(outputPackage, null, 2)
@@ -91,24 +59,25 @@ function customPackageJson(_path, option){
  * @param {Function} cb
  */
 
-function checkDistBranch (template, cb, destPath, options) {
-    template = 'iwaimai-bi-fe/' + template
-  request({
-    url: 'https://api.github.com/repos/' + template + '/branches',
-    headers: {
-      'User-Agent': 'iwaimai'
-    }
-  }, function (err, res, body) {
-    if (err) log.error(err)
-    if (res.statusCode !== 200) {
-      log.error('Template does not exist: ' + template)
-    } else {
-      var hasDist = JSON.parse(body).some(function (branch) {
-        return branch.name === 'dist'
-      })
-      return cb(hasDist ? template + '#dist' : template, destPath, options)
-    }
-  })
+function checkDistBranch (name, type, cb, destPath) {
+    var template = config.appListInfo[type].repository,
+        url = 'https://api.github.com/repos/' + template + '/branches';
+    request({
+        url: url,
+        headers: {
+            'User-Agent': 'request'
+        }
+    }, function (err, res, body) {
+        if (err) log.error(err)
+        if (res.statusCode !== 200) {
+          log.error('Template does not exist: ' + template)
+        } else {
+          var hasDist = JSON.parse(body).some(function (branch) {
+            return branch.name === 'dist'
+          })
+          return cb(hasDist ? template + '#dist' : template, destPath, name)
+        }
+    })
 }
 
 /**
@@ -117,8 +86,8 @@ function checkDistBranch (template, cb, destPath, options) {
  * @param {String} template
  */
 
-function downloadAndGenerate (template, destPath, options) {
-  var spinner = ora('downloading template')
+function downloadAndGenerate (template, destPath, name) {
+  var spinner = ora('downloading')
   spinner.start()
   download(template, destPath, { clone: true }, function (err) {
     
@@ -129,15 +98,12 @@ function downloadAndGenerate (template, destPath, options) {
     }
     spinner.succeed()
     spinner.stop()
-    customPackageJson(destPath, options)
+    customPackageJson(destPath, name)
 
-    if(options.name){
-        //生成目录重命名
-        fs.renameSync(destPath, path.join(path.dirname(destPath), options.name))
+    if(name){
+        //rename project dirname
+        fs.renameSync(destPath, path.join(path.dirname(destPath), name))
     }
-      log.success('Generated success at ' + destPath + '.')
-    // generate(name, tmp, to, function (err) {
-    //   if (err) log.error(err)
-    // })
+    log.success('Generated success at ' + destPath + '.')
   })
 }
