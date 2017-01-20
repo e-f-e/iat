@@ -8,23 +8,16 @@ npm install iat -g
 
 ## usage
 
-* -v/--vue
+* create an directory and move to
 
-```js
-iat -v appName
 ```
-上述命令会创建一个vue组件基本框架
-
-生成vue组件框架
-
-* -d/--dist
-
-```js
-iat -v appName -d ./dist
+mkdir my-project && cd my-project
 ```
 
-指定生成目录，默认为当前路径
+* create command
 
-* -f/--force
+```
+iat appName
+```
 
-强制覆盖生成目录
+* choose skeleton type
