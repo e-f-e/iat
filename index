@@ -17,7 +17,7 @@ programm
 checkVersion()
 
 var appName = programm.args[0],
-	output = path.join(__dirname);
+	output = process.cwd();
 
 if (appName) {
 	inquirer.prompt([{

@@ -1,5 +1,8 @@
 ## app component skeleton commander
 
+* support vue-skeleton/react-skeleton/webpack1.x-skeleton apps
+* more and more
+
 ## install
 
 ```js
