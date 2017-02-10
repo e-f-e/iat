@@ -43,12 +43,12 @@ function customPackageJson(_path, name){
     var packageJsonPath = path.join(_path, 'package.json')
     var packageJson = fs.readFileSync(packageJsonPath,'utf-8');
     packageJson = JSON.parse(packageJson)
-    var outputPackage = {
-        name: name || packageJson.name
-    }
+    
+    packageJson['name'] = name || packageJson.name
+    
 
-    outputPackage = JSON.stringify(outputPackage, null, 2)
-    fs.writeFileSync(packageJsonPath, outputPackage)
+    packageJson = JSON.stringify(packageJson, null, 2)
+    fs.writeFileSync(packageJsonPath, packageJson)
 }
 
 
