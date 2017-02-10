@@ -71,7 +71,11 @@ function checkDistBranch (name, type, cb, destPath) {
     }, function (err, res, body) {
         if (err) log.error(err)
         if (res.statusCode !== 200) {
-          log.error('Template does not exist: ' + template)
+            try {
+                return cb(template, destPath, name)
+            } catch (err) {
+              log.error('Template does not exist: ' + template)
+            }
         } else {
           var hasDist = JSON.parse(body).some(function (branch) {
             return branch.name === 'dist'

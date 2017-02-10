@@ -1,4 +1,4 @@
-## app component skeleton commander
+## create app in a few minutes.
 
 * support vue-skeleton/react-skeleton/webpack1.x-skeleton apps
 * more and more
