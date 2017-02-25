@@ -10,7 +10,7 @@ Object.keys(config).forEach(function (prop) {
 			 */
 			if (typeof appInfo == 'object') {
 				appListInfo[appInfo.name] = {
-					repository: appListInfo[appInfo.name] || 'e-f-e/' + appInfo.name + '-skeleton'
+					repository: appInfo.repository || 'e-f-e/' + appInfo.name + '-skeleton'
 				}
 			} else {
 				appListInfo[appInfo] = {

@@ -1,6 +1,6 @@
 {
   "name": "iat",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "description": "a simple component command line app.",
   "main": "index.js",
   "scripts": {

@@ -95,7 +95,6 @@ function downloadAndGenerate (template, destPath, name) {
   var spinner = ora('downloading')
   spinner.start()
   download(template, destPath, { clone: true }, function (err) {
-    
     if (err) {
         log.error('Failed to download repo ' + template + ': ' + err.message.trim())
         spinner.fail()
